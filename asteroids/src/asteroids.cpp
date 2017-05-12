@@ -1,9 +1,9 @@
-/* Asteroids
-    Sample solution for assignment
-    Semester 2 -- Small Embedded Systems
-    Dr Alun Moon
+/*
+	Asteroids assignment - Small Embedded Systems
+  By Keith Leighton 
+	15025361 
 */
-
+	
 /* C libraries */
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,41 +30,21 @@ float Dt = 0.01f;
 
 Ticker model, view, controller;
 
+bool mainMenu = true;
 bool paused = true;
-/* The single user button needs to have the PullUp resistor enabled */
-DigitalIn userbutton(P2_10,PullUp);
+
 int main()
 {
-
+		//Initialises the double buffer
     init_DBuffer();
     
-
+	  //Attaches timers to the different files
     view.attach( draw, 0.025);
     model.attach( physics, Dt);
-    controller.attach( controls, 0.1);
+    controller.attach( controls, 0.05);
     
     lives = 5;
     
-    /* Pause to start */
-    while( userbutton.read() ){ /* remember 1 is not pressed */
-        paused=true;
-        wait_ms(100);
-    }
-    paused = false;
+    paused = true;
     
-    while(true) {
-        /* do one of */
-        /* Wait until all lives have been used
-        while(lives>0){
-            // possibly do something game related here
-            wait_ms(200);
-        }
-        */
-        /* Wait until each life is lost
-        while( inPlay ){
-            // possibly do something game related here
-            wait_ms(200);
-        }
-        */
-    }
 }
