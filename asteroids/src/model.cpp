@@ -17,8 +17,8 @@ static asteroid_t asteroidHeap[heapSizeAsteroid];
 static missile_t *missileFreeNodes;
 static asteroid_t *asteroidFreeNodes;
 
-struct missile *missileActive = NULL;
-struct asteroid *asteroidActive = NULL;
+struct missile *mActive = NULL;
+struct asteroid *aActive = NULL;
 
 float headingTrajectory;
 float pointX;
@@ -83,7 +83,7 @@ asteroid_t *allocateNodeAsteroid(void)
 }
 
 
-void missileOrigin(struct missile *ignited) 
+void originMissile(struct missile *ignited) 
 { //Modelling the missile
 	int missileSpeed = 250;
 	ignited->missileX = player.originX;
@@ -97,12 +97,12 @@ void fireMissile(void)
 { //Firing a missile
 	struct missile *fireMissile = allocateNodeMissile();
 	if(fireMissile) {
-		fireMissile->next=missileActive;
-		missileActive=fireMissile;
-		missileOrigin(fireMissile);
+		fireMissile->next=mActive;
+		mActive=fireMissile;
+		originMissile(fireMissile);
 	}
 }
-void missileStatus (struct missile*p) 
+void missileState (struct missile*p) 
 { //Status of the missile; Destroy the missile after a collision
 	for (; p ; p = p->next) {
 		p->missileX += p->missileVelocityX * Dt;
@@ -122,7 +122,7 @@ void missileStatus (struct missile*p)
 		}
 	}
 }
-void missileAsteroidCollisionCheck(struct asteroid *a, struct missile *m) 
+void missileAsteroidCollision(struct asteroid *a, struct missile *m) 
 { //Checking for collisions between missiles and asteroids and destroying both when a collision occurs
 	for (; m ; m = m->next) {
 		for (; a ; a = a->next) {
@@ -134,7 +134,7 @@ void missileAsteroidCollisionCheck(struct asteroid *a, struct missile *m)
 	  }
   }
 }
-void asteroidOrigin(struct asteroid * ignited) 
+void originAsteroid(struct asteroid * ignited) 
 { //Modelling the asteroid
 	int asteroidSpeed = randrange(30,50); //Random asteroid speed to create more of a challenge
 	int shipRadius = 70;
@@ -157,12 +157,12 @@ void spawnAsteroid(void)
 	struct asteroid *spawn = allocateNodeAsteroid();
 	
 	if(spawn) {
-		spawn->next = asteroidActive;
-		asteroidActive = spawn;
-		asteroidOrigin(spawn);
+		spawn->next = aActive;
+		aActive = spawn;
+		originAsteroid(spawn);
 	}
 }
-void asteroidStatus (struct asteroid *p) 
+void asteroidState (struct asteroid *p) 
 { //Asteroid status; destroy the asteroid after a collsion
 	for(; p ; p = p->next) {
 		p->asteroidX += p-> asteroidVelocityX * Dt;
@@ -175,7 +175,7 @@ void asteroidStatus (struct asteroid *p)
 			}
 	}
 }
-void shipAsteroidCollisionCheck(struct asteroid *a) 
+void shipAsteroidCollision(struct asteroid *a) 
 { //Checking for collisions between the ship and asteroids
 	int shipRadius = 40;
 	for (; a ; a = a->next) {
@@ -201,7 +201,7 @@ void shipAsteroidCollisionCheck(struct asteroid *a)
 			}
 		}
 }
-void wrapAround(struct asteroid *a) 
+void wrapScreen(struct asteroid *a) 
 { //Wrap the ship and asteroids if the go off screen
 	if (player.originX > 485) {
 		player.originX = 5;
@@ -284,12 +284,12 @@ void physics(void)
 	shipTurning();
 	scoreIncrease();
 	shipDrag();
-	wrapAround(asteroidActive);
+	wrapScreen(aActive);
 	shipPosition();
-	missileAsteroidCollisionCheck(asteroidActive, missileActive);
-	shipAsteroidCollisionCheck(asteroidActive);
-	asteroidStatus(asteroidActive);
-	missileStatus(missileActive);
+	missileAsteroidCollision(aActive, mActive);
+	shipAsteroidCollision(aActive);
+	asteroidState(aActive);
+	missileState(mActive);
 	elapsed_time += Dt;
 	
 }

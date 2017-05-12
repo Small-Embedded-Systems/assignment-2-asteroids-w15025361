@@ -68,8 +68,8 @@ void shipTurning(void);
 
 //External variables
 extern double shipSpeed;
-extern struct missile *missileActive;
-extern struct asteroid *asteroidActive;
+extern struct missile *mActive;
+extern struct asteroid *aActive;
 extern const int heapSizeAsteroid;
 extern const int heapSizeMissile;
 extern int asteroidSize;
